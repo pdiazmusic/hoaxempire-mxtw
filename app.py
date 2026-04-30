@@ -25,7 +25,7 @@ with col5: st.markdown("🥩 **Res**")
 st.caption("Todos con verduras y arroz / All with vegetables and rice")
 st.divider()
 
-phone = "5215512345678"
+phone = "525611274706"
 wa_link = f"https://wa.me/{phone}?text=Hola,%20me%20interesa%20pedir%20comida%20natural%20para%20mi%20mascota."
 st.markdown(f'<a href="{wa_link}" target="_blank" style="display:block;background:#25D366;color:white;text-align:center;padding:12px;border-radius:8px;font-weight:bold;text-decoration:none;margin-bottom:1rem;">📱 Pedir por WhatsApp / Order via WhatsApp</a>', unsafe_allow_html=True)
 
@@ -47,7 +47,9 @@ if user_input:
     with st.chat_message("assistant"):
         with st.spinner("Un momento..."):
             client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
-            history = [m for m in st.session_state.messages if m["role"] == "user"]
+history = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages if m["role"] in ["user", "assistant"]]
+if history and history[0]["role"] == "assistant":
+    history = history[1:]
             response = client.messages.create(
                 model="claude-haiku-4-5-20251001",
                 max_tokens=1000,
