@@ -44,21 +44,4 @@ if user_input:
     st.session_state.messages.append({"role": "user", "content": user_input})
     with st.chat_message("user"):
         st.write(user_input)
-    with st.chat_message("assistant"):
-        with st.spinner("Un momento..."):
-            client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
-history = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages if m["role"] in ["user", "assistant"]]
-if history and history[0]["role"] == "assistant":
-    history = history[1:]
-            response = client.messages.create(
-                model="claude-haiku-4-5-20251001",
-                max_tokens=1000,
-                system=SYSTEM_PROMPT,
-                messages=history
-            )
-            answer = response.content[0].text
-            st.write(answer)
-    st.session_state.messages.append({"role": "assistant", "content": answer})
-
-st.divider()
-st.caption("🐾 100% Natural Pet — Ciudad de México | Sin preservativos · Preparado diario · Con Vitamin PET")
+    with st.chat
