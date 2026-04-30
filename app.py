@@ -1,25 +1,9 @@
 import streamlit as st
 import anthropic
 
-st.set_page_config(
-    page_title="100% Natural Pet",
-    page_icon="🐾",
-    layout="centered"
-)
+st.set_page_config(page_title="100% Natural Pet", page_icon="🐾", layout="centered")
 
-st.markdown("""
-    <style>
-    .header {
-        background: #1a6b3a;
-        padding: 1.5rem 2rem;
-        border-radius: 12px;
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-    }
-    </style>
-""", unsafe_allow_html=True)
+st.markdown('<style>.header{background:#1a6b3a;padding:1.5rem 2rem;border-radius:12px;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.5rem;}</style>', unsafe_allow_html=True)
 
 st.markdown("""
 <div class="header">
@@ -41,31 +25,38 @@ with col5: st.markdown("🥩 **Res**")
 st.caption("Todos con verduras y arroz / All with vegetables and rice")
 st.divider()
 
-phone = "525611274706"
+phone = "5215512345678"
 wa_link = f"https://wa.me/{phone}?text=Hola,%20me%20interesa%20pedir%20comida%20natural%20para%20mi%20mascota."
-st.markdown(f"""
-<a href="{wa_link}" target="_blank" style="
-    display:block;
-    background:#25D366;
-    color:white;
-    text-align:center;
-    padding:12px;
-    border-radius:8px;
-    font-weight:bold;
-    text-decoration:none;
-    margin-bottom:1rem;
-">📱 Pedir por WhatsApp / Order via WhatsApp</a>
-""", unsafe_allow_html=True)
+st.markdown(f'<a href="{wa_link}" target="_blank" style="display:block;background:#25D366;color:white;text-align:center;padding:12px;border-radius:8px;font-weight:bold;text-decoration:none;margin-bottom:1rem;">📱 Pedir por WhatsApp / Order via WhatsApp</a>', unsafe_allow_html=True)
 
-SYSTEM_PROMPT = """
-Eres el asistente virtual de 100% Natural Pet, empresa de comida natural 
-para mascotas en Ciudad de México.
+SYSTEM_PROMPT = "Eres el asistente virtual de 100% Natural Pet, empresa de comida natural para mascotas en Ciudad de Mexico. MENU: Huevo, Pollo, Sardina, Atun o Carne de Res con verduras y arroz. INGREDIENTES: Papa, zanahoria, calabaza, chayote, espinaca, avena, arroz, aceite vegetal, calcio y Vitamin PET. DIFERENCIAL: Preparada fresca diariamente, cero preservativos, cero aditivos. INSTRUCCIONES: Detecta el idioma y responde en ese mismo idioma. Espanol natural de Mexico o ingles. Si preguntan precio di que un asesor les contactara. Si quieren pedir solicita nombre y colonia. Se amable, calido y profesional siempre."
 
-MENÚ: Huevo, Pollo, Sardina, Atún o Carne de Res con verduras y arroz.
+if "messages" not in st.session_state:
+    st.session_state.messages = [{"role": "assistant", "content": "Hola! Bienvenido a 100% Natural Pet. En que te puedo ayudar hoy?"}]
 
-INGREDIENTES: Papa, zanahoria, calabaza, chayote, espinaca, avena, arroz, 
-aceite vegetal, calcio y Vitamin PET (suplemento vitamínico).
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
 
-DIFERENCIAL: Preparada fresca diariamente, cero preservativos, cero aditivos.
+user_input = st.chat_input("Escribe tu pregunta / Type your question...")
 
-IN
+if user_input:
+    st.session_state.messages.append({"role": "user", "content": user_input})
+    with st.chat_message("user"):
+        st.write(user_input)
+    with st.chat_message("assistant"):
+        with st.spinner("Un momento..."):
+            client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
+            history = [m for m in st.session_state.messages if m["role"] == "user"]
+            response = client.messages.create(
+                model="claude-haiku-4-5-20251001",
+                max_tokens=1000,
+                system=SYSTEM_PROMPT,
+                messages=history
+            )
+            answer = response.content[0].text
+            st.write(answer)
+    st.session_state.messages.append({"role": "assistant", "content": answer})
+
+st.divider()
+st.caption("🐾 100% Natural Pet — Ciudad de México | Sin preservativos · Preparado diario · Con Vitamin PET")
