@@ -28,6 +28,20 @@ def _load_gcp_credentials_dict():
             return None, f"Error leyendo '[gcp_service_account]': {e}"
     return None, "No encuentro ninguna credencial de Google en Secrets (falta 'gcp_service_account_json' o '[gcp_service_account]')."
 
+def add_task_to_sheet(casa, tarea, estado, fecha_limite):
+    """Agrega una fila nueva a la pestaña Tareas. Devuelve (ok, mensaje). Nota: get_gsheet_client
+    se define más abajo en el archivo, pero Python la resuelve en tiempo de ejecución, no de definición,
+    así que esta función puede llamarla sin problema aunque aparezca antes en el archivo."""
+    client = get_gsheet_client()
+    if client is None:
+        return False, "No hay conexión con Google Sheets todavía (revisa el diagnóstico más abajo)."
+    try:
+        sh = client.open(SHEET_NAME)
+        sh.worksheet("Tareas").append_row([casa, tarea, estado, fecha_limite])
+        return True, "Tarea agregada correctamente."
+    except Exception as e:
+        return False, f"No se pudo escribir la tarea: {e}"
+
 def diagnose_sheets_connection():
     creds_dict, err = _load_gcp_credentials_dict()
     if creds_dict is None:
@@ -191,6 +205,25 @@ with tab_board:
     st.markdown('<div class="quick-prompt-label" style="margin-top:20px;">Próximos entregables de BASE AGENCY</div>', unsafe_allow_html=True)
     for label, dt in DELIVERABLES:
         st.markdown(f'<div class="deliverable-row"><span>{label}</span><span class="deliverable-date">{dt}</span></div>', unsafe_allow_html=True)
+
+    st.markdown('<div class="quick-prompt-label" style="margin-top:20px;">Asignar nueva tarea</div>', unsafe_allow_html=True)
+    with st.expander("➕ Agregar tarea al Sheet"):
+        with st.form("new_task_form", clear_on_submit=True):
+            casa_options = [h["name"] for h in HOUSES] + ["General / Todas las casas"]
+            f_casa = st.selectbox("Casa", casa_options)
+            f_tarea = st.text_input("Tarea")
+            f_estado = st.selectbox("Estado", ["Pendiente", "En progreso", "Resuelto", "Bloqueado"])
+            f_fecha = st.text_input("Fecha límite (ej. 'Ago 1' o '30 Oct')")
+            submitted = st.form_submit_button("Agregar tarea")
+            if submitted:
+                if not f_tarea.strip():
+                    st.error("Escribe una descripción de la tarea.")
+                else:
+                    ok, msg = add_task_to_sheet(f_casa, f_tarea, f_estado, f_fecha)
+                    if ok:
+                        st.success(msg)
+                    else:
+                        st.error(msg)
 
     with st.expander("🔧 Diagnóstico: conexión con Google Sheets"):
         if st.button("Probar conexión ahora"):
