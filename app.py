@@ -14,7 +14,7 @@ def _load_gcp_credentials_dict():
     if "gcp_service_account_json" in st.secrets:
         raw = st.secrets["gcp_service_account_json"]
         try:
-            return json.loads(raw), None
+            return json.loads(raw, strict=False), None
         except json.JSONDecodeError as e:
             snippet = raw[max(0, e.pos - 20):e.pos + 20].replace(chr(10), "⏎")
             return None, (f"El JSON pegado en 'gcp_service_account_json' no es válido: {e.msg} "
