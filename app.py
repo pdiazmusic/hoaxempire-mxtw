@@ -665,7 +665,10 @@ def call_claude():
         system=build_system_prompt(),
         messages=history,
     )
-    return response.content[0].text
+    for block in response.content:
+        if getattr(block, "type", None) == "text":
+            return block.text
+    return "(El modelo no devolvió texto en la respuesta. Intenta de nuevo.)"
 
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "Hola Pablo — soy tu asistente de producción de MXTW. ¿En qué casa o pendiente quieres que te ayude hoy?"}]
