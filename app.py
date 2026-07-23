@@ -9,20 +9,29 @@ import json
 SHEET_NAME = "MXTW Asistente - Datos"
 
 def _load_gcp_credentials_dict():
-    # Acepta dos formas de guardar la credencial en Secrets:
-    # 1) gcp_service_account_json = """{...todo el JSON pegado tal cual...}"""  <- la simple, recomendada
-    # 2) [gcp_service_account]  con cada campo como clave = "valor"            <- la manual, más propensa a errores
+    """Devuelve (creds_dict, error_msg). Si algo falla, error_msg trae el detalle y creds_dict es None.
+    Nunca lanza una excepción -- así un JSON mal formado no tumba toda la app."""
     if "gcp_service_account_json" in st.secrets:
         raw = st.secrets["gcp_service_account_json"]
-        return json.loads(raw)
+        try:
+            return json.loads(raw), None
+        except json.JSONDecodeError as e:
+            snippet = raw[max(0, e.pos - 20):e.pos + 20].replace(chr(10), "⏎")
+            return None, (f"El JSON pegado en 'gcp_service_account_json' no es válido: {e.msg} "
+                           f"(línea {e.lineno}, columna {e.colno}). Alrededor del error dice: ...{snippet}...")
+        except Exception as e:
+            return None, f"No pude leer 'gcp_service_account_json': {e}"
     if "gcp_service_account" in st.secrets:
-        return dict(st.secrets["gcp_service_account"])
-    return None
+        try:
+            return dict(st.secrets["gcp_service_account"]), None
+        except Exception as e:
+            return None, f"Error leyendo '[gcp_service_account]': {e}"
+    return None, "No encuentro ninguna credencial de Google en Secrets (falta 'gcp_service_account_json' o '[gcp_service_account]')."
 
 def diagnose_sheets_connection():
-    creds_dict = _load_gcp_credentials_dict()
+    creds_dict, err = _load_gcp_credentials_dict()
     if creds_dict is None:
-        return False, "No encuentro ninguna credencial de Google en Secrets. Falta 'gcp_service_account_json' (o '[gcp_service_account]'). Revisa que lo hayas pegado y guardado en Settings → Secrets."
+        return False, err
     try:
         scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
         creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
@@ -649,12 +658,15 @@ LO QUE SE DEBE ENTREGAR POR CASA: documento con mapeo específico, requerimiento
 SHEET_NAME = "MXTW Asistente - Datos"
 
 def get_gsheet_client():
-    creds_dict = _load_gcp_credentials_dict()
+    creds_dict, err = _load_gcp_credentials_dict()
     if creds_dict is None:
         return None
-    scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-    creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
-    return gspread.authorize(creds)
+    try:
+        scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+        creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+        return gspread.authorize(creds)
+    except Exception:
+        return None
 
 def get_live_sheet_context():
     # Lee las tareas actuales y las últimas conversaciones guardadas en el Google Sheet,
