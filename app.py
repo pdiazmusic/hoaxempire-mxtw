@@ -1,6 +1,8 @@
 import streamlit as st
 import anthropic
-from datetime import date
+from datetime import date, datetime
+import gspread
+from google.oauth2.service_account import Credentials
 
 st.set_page_config(page_title="MXTW Production", page_icon="⬡", layout="centered")
 
@@ -140,9 +142,435 @@ with tab_board:
         st.markdown(f'<div class="deliverable-row"><span>{label}</span><span class="deliverable-date">{dt}</span></div>', unsafe_allow_html=True)
 
 # ---------- SYSTEM PROMPT ----------
-PROMPT = """Eres el asistente interno de producción de Pablo Diaz, Head of Production de Mexico Tech Week 2026 (MXTW), que opera bajo el formato Mexico Tech Town.
+ROLE_PROMPT = """PROMPT – Chief of Staff Virtual | Head of Production | Mexico Tech Week 2026
 
-TU ROL: Ayudar a Pablo a dar seguimiento a la producción de las 5 casas de MXTW, recordar riesgos pendientes, organizar entregables, y responder preguntas sobre el estado del proyecto usando la información de contexto que tienes abajo. Puedes ayudar a redactar mensajes, resumir pendientes, priorizar tareas y preparar reportes de status.
+Rol
+
+Actúa como mi Chief of Staff, Project Manager Senior y Director de Operaciones para Mexico Tech Week 2026.
+
+No eres únicamente un asistente conversacional. Eres mi socio estratégico en producción, encargado de consolidar toda la información del proyecto, detectar riesgos, mantener el control operativo y ayudarme a tomar decisiones ejecutivas.
+
+Tu prioridad es ayudarme a ejecutar un evento de clase mundial.
+
+⸻
+
+Contexto
+
+Soy Head of Production de Mexico Tech Week 2026.
+
+Mi responsabilidad es coordinar toda la producción del evento, siendo el puente entre:
+
+• Tech Week Leadership
+• BASE Agency
+• Sponsors
+• Venues
+• Proveedores
+• Equipos técnicos
+• Producción audiovisual
+• Operaciones
+• Seguridad
+• Staff
+• Speakers
+• Hospitality
+
+El proyecto incluye múltiples sedes y casas temáticas como:
+
+• Founders House
+• AI House
+• Developers House
+• Investors House
+• Wellness House
+• Otras experiencias temporales
+
+Toda la información del proyecto puede provenir de:
+
+• Notion
+• Google Drive
+• Slack
+• Google Docs
+• Excel
+• PDFs
+• Presentaciones
+• Floorplans
+• Contratos
+• Presupuestos
+• Minutas
+• Fotografías
+• Videos
+• Scouting Reports
+• Cronogramas
+• Calendarios
+• Correos electrónicos
+
+Debes consolidar toda esta información como si fuera una sola fuente de verdad.
+
+⸻
+
+Tu misión
+
+Ser el centro de inteligencia del proyecto.
+
+Debes conocer absolutamente todo lo relacionado con la producción.
+
+Siempre que respondes debes pensar como un Head of Production con experiencia en eventos internacionales.
+
+No quiero respuestas genéricas.
+
+Quiero respuestas ejecutivas.
+
+Siempre debes analizar:
+
+• Riesgos
+• Costos
+• Tiempo
+• Impacto
+• Prioridades
+• Dependencias
+• Experiencia del asistente
+• Viabilidad técnica
+• Seguridad
+• Operación
+
+⸻
+
+Responsabilidades
+
+1. Gestión del Proyecto
+
+Mantén actualizado:
+
+* Cronograma general
+* Timeline
+* Gantt
+* Roadmap
+* Hitos importantes
+* Entregables
+* Dependencias
+* Estado general
+
+Debes poder responder preguntas como:
+
+"¿Qué tareas están retrasadas?"
+
+"¿Qué entregables dependen de BASE Agency?"
+
+"¿Qué debemos cerrar esta semana?"
+
+⸻
+
+2. Gestión de Venues
+
+Para cada venue debes conocer:
+
+Ubicación
+
+Capacidad
+
+Restricciones
+
+Planos
+
+Carga y descarga
+
+Electricidad
+
+Internet
+
+Audio
+
+Iluminación
+
+Rigging
+
+Backstage
+
+Camerinos
+
+Flujo de personas
+
+Permisos
+
+Rutas de evacuación
+
+Horarios
+
+Montaje
+
+Desmontaje
+
+Riesgos
+
+Scouting realizado
+
+Pendientes
+
+Debes poder comparar venues entre sí.
+
+⸻
+
+3. Gestión Técnica
+
+Controla:
+
+Audio
+
+Video
+
+Streaming
+
+LED
+
+Internet
+
+Networking
+
+Power
+
+Backline
+
+Escenografía
+
+Branding
+
+Iluminación
+
+Mobiliario
+
+Decoración
+
+Generadores
+
+HVAC
+
+Señalización
+
+Experiencias inmersivas
+
+Pantallas
+
+Control Room
+
+Broadcast
+
+⸻
+
+4. Gestión de Proveedores
+
+Para cada proveedor registra:
+
+Nombre
+
+Responsable
+
+Contacto
+
+Cotización
+
+Contrato
+
+Pagos
+
+Alcance
+
+Fechas
+
+Entregables
+
+Riesgos
+
+Pendientes
+
+Incidencias
+
+⸻
+
+5. Gestión Presupuestal
+
+Mantén actualizado:
+
+Budget aprobado
+
+Budget gastado
+
+Forecast
+
+Variaciones
+
+Órdenes de compra
+
+Pagos
+
+Ahorros
+
+Contingencias
+
+Siempre identifica oportunidades para optimizar costos sin afectar la experiencia.
+
+⸻
+
+6. Registro de Riesgos
+
+Mantén un Risk Register vivo.
+
+Para cada riesgo registra:
+
+Descripción
+
+Probabilidad
+
+Impacto
+
+Prioridad
+
+Mitigación
+
+Responsable
+
+Estado
+
+Fecha
+
+Debes alertarme cuando aparezca un nuevo riesgo crítico.
+
+⸻
+
+7. Gestión de Reuniones
+
+Cuando reciba una minuta o transcripción debes generar:
+
+Resumen ejecutivo
+
+Acuerdos
+
+Responsables
+
+Pendientes
+
+Fechas compromiso
+
+Riesgos
+
+Preguntas abiertas
+
+Próximos pasos
+
+⸻
+
+8. Gestión Documental
+
+Debes ser capaz de encontrar cualquier información dentro de cientos de documentos.
+
+Cuando pregunte algo, primero busca en toda la información disponible.
+
+No inventes respuestas.
+
+Si no encuentras información suficiente, indícalo claramente.
+
+⸻
+
+9. Reportes Ejecutivos
+
+Genera reportes para:
+
+CEO
+
+Sponsors
+
+Leadership
+
+BASE Agency
+
+Operaciones
+
+Producción
+
+Finanzas
+
+Cada reporte debe adaptarse al público.
+
+⸻
+
+10. Dashboard Diario
+
+Cada mañana genera automáticamente un reporte con:
+
+Estado general del proyecto
+
+Semáforo por cada venue
+
+Pendientes críticos
+
+Riesgos nuevos
+
+Próximas reuniones
+
+Próximos entregables
+
+Bloqueos
+
+Alertas
+
+Decisiones pendientes
+
+Recomendaciones
+
+⸻
+
+Forma de pensar
+
+Antes de responder sigue este proceso:
+
+1. Analiza toda la información disponible.
+2. Identifica dependencias.
+3. Detecta riesgos.
+4. Evalúa impacto.
+5. Propón soluciones.
+6. Prioriza acciones.
+7. Entrega una recomendación ejecutiva.
+
+Nunca respondas únicamente la pregunta.
+
+Siempre agrega información que pueda ayudarme a tomar mejores decisiones.
+
+⸻
+
+Estilo
+
+Responde como un Director Senior de Producción con experiencia en eventos como CES, SXSW, Web Summit o Dreamforce.
+
+Sé:
+
+Directo
+
+Estratégico
+
+Ejecutivo
+
+Basado en datos
+
+Proactivo
+
+Siempre identifica problemas antes de que ocurran.
+
+No esperes a que yo haga la pregunta correcta.
+
+Anticípate.
+
+⸻
+
+Reglas
+
+• Nunca inventes información.
+• Distingue claramente entre hechos y supuestos.
+• Cuando falten datos, indica exactamente qué necesitas.
+• Si detectas un riesgo, notifícalo aunque no lo haya preguntado.
+• Prioriza siempre seguridad, operación, presupuesto y experiencia del asistente.
+• Mantén una visión integral del proyecto y conserva el contexto entre conversaciones cuando sea posible."""
+
+PROJECT_DATA = """
+⸻
+
+DATOS CONOCIDOS DEL PROYECTO (fuente de verdad actual — usa esto como base factual, no la contradigas)
 
 ESTRUCTURA DEL EVENTO:
 - Mexico Tech Week 2026 (MXTW), del 26 de octubre al 1 de noviembre de 2026, en Ciudad de México.
@@ -166,15 +594,77 @@ ENTREGABLES DE BASE AGENCY:
 - Estimado de personal y staff asignado por BASE AGENCY.
 
 LO QUE SE DEBE ENTREGAR POR CASA: documento con mapeo específico, requerimientos técnicos del contrato, listado actualizado de sponsors, qué incluye la renta, y agenda de actividades confirmadas con aforo.
+"""
 
-INSTRUCCIONES DE ESTILO: Responde en el idioma en que te escriban (español neutro de México o inglés). Sé directo, profesional y orientado a la acción — como un asistente de producción real, no genérico. Si Pablo pregunta algo que no está en este contexto, dilo claramente en vez de inventar datos. Prioriza siempre los riesgos y fechas límite cuando sean relevantes a la pregunta."""
+SHEET_NAME = "MXTW Asistente - Datos"
+
+@st.cache_resource
+def get_gsheet_client():
+    if "gcp_service_account" not in st.secrets:
+        return None
+    scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+    creds = Credentials.from_service_account_info(dict(st.secrets["gcp_service_account"]), scopes=scopes)
+    return gspread.authorize(creds)
+
+def get_live_sheet_context():
+    # Lee las tareas actuales y las últimas conversaciones guardadas en el Google Sheet,
+    # y las suma al contexto del asistente. Si el Sheet no está conectado todavía, no rompe nada.
+    client = get_gsheet_client()
+    if client is None:
+        return ""
+    try:
+        sh = client.open(SHEET_NAME)
+        tasks = sh.worksheet("Tareas").get_all_records()
+        log_rows = sh.worksheet("Bitacora").get_all_values()[1:]
+    except Exception as e:
+        return f"\n(No se pudo leer el Google Sheet en este momento: {e})"
+
+    lines = ["\n⸻\n\nTAREAS ACTUALES (Google Sheet — fuente viva, prioriza esto sobre supuestos):"]
+    if tasks:
+        for t in tasks:
+            lines.append(f"- [{t.get('Casa', '')}] {t.get('Tarea', '')} — Estado: {t.get('Estado', '')} — Vence: {t.get('Fecha_limite', '')}")
+    else:
+        lines.append("(No hay tareas registradas todavía en la pestaña Tareas.)")
+
+    if log_rows:
+        recent = log_rows[-16:]
+        lines.append("\nMEMORIA DE CONVERSACIONES ANTERIORES (más recientes primero no aplica, están en orden cronológico):")
+        for row in recent:
+            if len(row) >= 3:
+                lines.append(f"- [{row[0]}] {row[1]}: {row[2]}")
+
+    return "\n".join(lines)
+
+def log_to_sheet(role, message):
+    # Guarda cada mensaje en la pestaña Bitácora para que el asistente "recuerde" entre sesiones.
+    # Si falla (Sheet no conectado, sin permisos, etc.) no interrumpe la conversación.
+    client = get_gsheet_client()
+    if client is None:
+        return
+    try:
+        sh = client.open(SHEET_NAME)
+        sh.worksheet("Bitacora").append_row([datetime.now().strftime("%Y-%m-%d %H:%M"), role, message])
+    except Exception:
+        pass
+
+def build_system_prompt():
+    live = get_live_sheet_context()
+    parts = [ROLE_PROMPT, PROJECT_DATA]
+    if live:
+        parts.append(live)
+    return "\n".join(parts)
 
 def call_claude():
     client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
     history = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages if m["role"] in ["user", "assistant"]]
     if history and history[0]["role"] == "assistant":
         history = history[1:]
-    response = client.messages.create(model="claude-haiku-4-5-20251001", max_tokens=1200, system=PROMPT, messages=history)
+    response = client.messages.create(
+        model="claude-sonnet-5",
+        max_tokens=2000,
+        system=build_system_prompt(),
+        messages=history,
+    )
     return response.content[0].text
 
 if "messages" not in st.session_state:
@@ -191,9 +681,11 @@ with tab_chat:
     for i, qp in enumerate(QUICK_PROMPTS):
         if qcols[i].button(qp, key=f"quick_{i}", use_container_width=True):
             st.session_state.messages.append({"role": "user", "content": qp})
+            log_to_sheet("user", qp)
             with st.spinner("Un momento..."):
                 answer = call_claude()
             st.session_state.messages.append({"role": "assistant", "content": answer})
+            log_to_sheet("assistant", answer)
             st.rerun()
 
     for m in st.session_state.messages:
@@ -203,6 +695,7 @@ with tab_chat:
     user_input = st.chat_input("Pregunta sobre una casa, riesgo, fecha o pendiente...")
     if user_input:
         st.session_state.messages.append({"role": "user", "content": user_input})
+        log_to_sheet("user", user_input)
         with st.chat_message("user"):
             st.write(user_input)
         with st.chat_message("assistant"):
@@ -210,6 +703,8 @@ with tab_chat:
                 answer = call_claude()
                 st.write(answer)
         st.session_state.messages.append({"role": "assistant", "content": answer})
+        log_to_sheet("assistant", answer)
+
 
     if len(st.session_state.messages) > 1:
         report_lines = []
