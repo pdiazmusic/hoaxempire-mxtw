@@ -4,21 +4,35 @@ from datetime import date, datetime
 import gspread
 from google.oauth2.service_account import Credentials
 
+import json
+
 SHEET_NAME = "MXTW Asistente - Datos"
 
+def _load_gcp_credentials_dict():
+    # Acepta dos formas de guardar la credencial en Secrets:
+    # 1) gcp_service_account_json = """{...todo el JSON pegado tal cual...}"""  <- la simple, recomendada
+    # 2) [gcp_service_account]  con cada campo como clave = "valor"            <- la manual, más propensa a errores
+    if "gcp_service_account_json" in st.secrets:
+        raw = st.secrets["gcp_service_account_json"]
+        return json.loads(raw)
+    if "gcp_service_account" in st.secrets:
+        return dict(st.secrets["gcp_service_account"])
+    return None
+
 def diagnose_sheets_connection():
-    if "gcp_service_account" not in st.secrets:
-        return False, "No encuentro 'gcp_service_account' en Secrets. Revisa que lo hayas pegado y guardado en Settings → Secrets."
+    creds_dict = _load_gcp_credentials_dict()
+    if creds_dict is None:
+        return False, "No encuentro ninguna credencial de Google en Secrets. Falta 'gcp_service_account_json' (o '[gcp_service_account]'). Revisa que lo hayas pegado y guardado en Settings → Secrets."
     try:
         scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-        creds = Credentials.from_service_account_info(dict(st.secrets["gcp_service_account"]), scopes=scopes)
+        creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
         client = gspread.authorize(creds)
     except Exception as e:
-        return False, f"Las credenciales del JSON no son válidas: {e}"
+        return False, f"Las credenciales no son válidas: {e}"
     try:
         sh = client.open(SHEET_NAME)
     except gspread.SpreadsheetNotFound:
-        return False, f"No encuentro un Sheet llamado exactamente '{SHEET_NAME}'. Revisa el nombre (mayúsculas, espacios, guion) y que esté compartido con: {st.secrets['gcp_service_account'].get('client_email', '(no encontrado en secrets)')}"
+        return False, f"No encuentro un Sheet llamado exactamente '{SHEET_NAME}'. Revisa el nombre (mayúsculas, espacios, guion) y que esté compartido con: {creds_dict.get('client_email', '(no encontrado)')}"
     except Exception as e:
         return False, f"Error abriendo el Sheet: {e}"
     try:
@@ -635,10 +649,11 @@ LO QUE SE DEBE ENTREGAR POR CASA: documento con mapeo específico, requerimiento
 SHEET_NAME = "MXTW Asistente - Datos"
 
 def get_gsheet_client():
-    if "gcp_service_account" not in st.secrets:
+    creds_dict = _load_gcp_credentials_dict()
+    if creds_dict is None:
         return None
     scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-    creds = Credentials.from_service_account_info(dict(st.secrets["gcp_service_account"]), scopes=scopes)
+    creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
     return gspread.authorize(creds)
 
 def get_live_sheet_context():
