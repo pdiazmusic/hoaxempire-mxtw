@@ -28,6 +28,17 @@ def _load_gcp_credentials_dict():
             return None, f"Error leyendo '[gcp_service_account]': {e}"
     return None, "No encuentro ninguna credencial de Google en Secrets (falta 'gcp_service_account_json' o '[gcp_service_account]')."
 
+def get_gsheet_client():
+    creds_dict, err = _load_gcp_credentials_dict()
+    if creds_dict is None:
+        return None
+    try:
+        scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+        creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+        return gspread.authorize(creds)
+    except Exception:
+        return None
+
 def add_task_to_sheet(casa, tarea, estado, fecha_limite, responsable="Sin asignar"):
     """Agrega una fila nueva a la pestaña Tareas. Devuelve (ok, mensaje)."""
     client = get_gsheet_client()
@@ -787,19 +798,6 @@ ENTREGABLES DE BASE AGENCY:
 
 LO QUE SE DEBE ENTREGAR POR CASA: documento con mapeo específico, requerimientos técnicos del contrato, listado actualizado de sponsors, qué incluye la renta, y agenda de actividades confirmadas con aforo.
 """
-
-SHEET_NAME = "MXTW Asistente - Datos"
-
-def get_gsheet_client():
-    creds_dict, err = _load_gcp_credentials_dict()
-    if creds_dict is None:
-        return None
-    try:
-        scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-        creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
-        return gspread.authorize(creds)
-    except Exception:
-        return None
 
 def get_live_sheet_context():
     # Lee las tareas actuales y las últimas conversaciones guardadas en el Google Sheet,
