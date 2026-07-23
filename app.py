@@ -28,19 +28,28 @@ def _load_gcp_credentials_dict():
             return None, f"Error leyendo '[gcp_service_account]': {e}"
     return None, "No encuentro ninguna credencial de Google en Secrets (falta 'gcp_service_account_json' o '[gcp_service_account]')."
 
-def add_task_to_sheet(casa, tarea, estado, fecha_limite):
-    """Agrega una fila nueva a la pestaña Tareas. Devuelve (ok, mensaje). Nota: get_gsheet_client
-    se define más abajo en el archivo, pero Python la resuelve en tiempo de ejecución, no de definición,
-    así que esta función puede llamarla sin problema aunque aparezca antes en el archivo."""
+def add_task_to_sheet(casa, tarea, estado, fecha_limite, responsable="Sin asignar"):
+    """Agrega una fila nueva a la pestaña Tareas. Devuelve (ok, mensaje)."""
     client = get_gsheet_client()
     if client is None:
         return False, "No hay conexión con Google Sheets todavía (revisa el diagnóstico más abajo)."
     try:
         sh = client.open(SHEET_NAME)
-        sh.worksheet("Tareas").append_row([casa, tarea, estado, fecha_limite])
+        sh.worksheet("Tareas").append_row([casa, tarea, estado, fecha_limite, responsable])
         return True, "Tarea agregada correctamente."
     except Exception as e:
         return False, f"No se pudo escribir la tarea: {e}"
+
+def get_all_tasks():
+    """Devuelve (lista_de_tareas, error_msg). Cada tarea es un dict con las columnas del Sheet."""
+    client = get_gsheet_client()
+    if client is None:
+        return [], "No hay conexión con Google Sheets todavía."
+    try:
+        sh = client.open(SHEET_NAME)
+        return sh.worksheet("Tareas").get_all_records(), None
+    except Exception as e:
+        return [], f"No se pudieron leer las tareas: {e}"
 
 def diagnose_sheets_connection():
     creds_dict, err = _load_gcp_credentials_dict()
@@ -187,7 +196,84 @@ DELIVERABLES = [
 ]
 
 # ---------- TABS ----------
-tab_board, tab_chat = st.tabs(["🏗️ War Room", "💬 Assistant"])
+PEOPLE_TABS = [
+    {
+        "key": "aldo",
+        "label": "🗓️ Aldo Pérez",
+        "display_name": "Aldo Pérez",
+        "aliases": ["aldo", "aldo pérez", "aldo perez", "timeline"],
+        "role": "Responsable del Timeline general del proyecto, trabajando en conjunto con BASE AGENCY para mantener actualizado el cronograma, hitos y entregables de las 5 casas.",
+    },
+    {
+        "key": "base",
+        "label": "🏢 BASE AGENCY",
+        "display_name": "BASE AGENCY",
+        "aliases": ["base", "base agency", "daniel graterol", "rodrigo ruiz", "fernanda"],
+        "role": "Firma de producción que ejecuta el formato Mexico Tech Town en las 5 casas. Equipo: Daniel Graterol, Rodrigo Ruiz (líder de proyecto por parte de BASE) y Fernanda.",
+    },
+    {
+        "key": "roxana",
+        "label": "📋 Roxana Antohi",
+        "display_name": "Roxana Antohi",
+        "aliases": ["roxana", "roxana antohi", "rox"],
+        "role": "Punto de contacto y coordinación de venues/presupuestos (rox@mexicotechweek.mx) — aparece como contacto en las cotizaciones y contratos de varias casas.",
+    },
+    {
+        "key": "pablo",
+        "label": "👤 Pablo Díaz",
+        "display_name": "Pablo Díaz",
+        "aliases": ["pablo", "pablo díaz", "pablo diaz"],
+        "role": "Head of Production de Mexico Tech Week 2026 (MXTW) sobre las 5 casas. Puente entre Tech Week Leadership, BASE AGENCY, sponsors, venues y proveedores.",
+    },
+]
+
+def render_person_tab(person):
+    st.markdown(f"""
+    <div class="house-card" style="border-left-color: var(--gold);">
+      <div class="house-tag">Rol</div>
+      <div class="house-status" style="margin-top: 0.3rem;">{person['role']}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="quick-prompt-label" style="margin-top:20px;">Tareas asignadas</div>', unsafe_allow_html=True)
+    tasks, err = get_all_tasks()
+    if err:
+        st.info(f"Aún no hay conexión con el Sheet para mostrar tareas en vivo. ({err})")
+    else:
+        aliases_lower = [a.lower() for a in person["aliases"]]
+        mine = [t for t in tasks if str(t.get("Responsable", "")).strip().lower() in aliases_lower]
+        if not mine:
+            st.caption("No hay tareas asignadas todavía a esta persona/equipo en el Sheet.")
+        for t in mine:
+            st.markdown(f"""
+            <div class="house-card" style="border-left-color: var(--midgray);">
+              <div class="house-tag">{t.get('Casa','')}</div>
+              <div class="house-name" style="font-size: 1.1rem;">{t.get('Tarea','')}</div>
+              <div class="house-status">Estado: {t.get('Estado','')} · Vence: {t.get('Fecha_limite','')}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    with st.expander(f"➕ Agregar tarea para {person['display_name']}"):
+        with st.form(f"new_task_form_{person['key']}", clear_on_submit=True):
+            casa_options = [h["name"] for h in HOUSES] + ["General / Todas las casas"]
+            f_casa = st.selectbox("Casa", casa_options, key=f"casa_{person['key']}")
+            f_tarea = st.text_input("Tarea", key=f"tarea_{person['key']}")
+            f_estado = st.selectbox("Estado", ["Pendiente", "En progreso", "Resuelto", "Bloqueado"], key=f"estado_{person['key']}")
+            f_fecha = st.text_input("Fecha límite", key=f"fecha_{person['key']}")
+            submitted = st.form_submit_button("Agregar tarea")
+            if submitted:
+                if not f_tarea.strip():
+                    st.error("Escribe una descripción de la tarea.")
+                else:
+                    ok, msg = add_task_to_sheet(f_casa, f_tarea, f_estado, f_fecha, person["display_name"])
+                    if ok:
+                        st.success(msg)
+                    else:
+                        st.error(msg)
+
+tab_board, tab_aldo, tab_base, tab_roxana, tab_pablo, tab_chat = st.tabs(
+    ["🏗️ War Room", "🗓️ Aldo Pérez", "🏢 BASE AGENCY", "📋 Roxana Antohi", "👤 Pablo Díaz", "💬 Assistant"]
+)
 
 with tab_board:
     st.markdown('<div class="quick-prompt-label">Estado de las 5 casas</div>', unsafe_allow_html=True)
@@ -214,12 +300,13 @@ with tab_board:
             f_tarea = st.text_input("Tarea")
             f_estado = st.selectbox("Estado", ["Pendiente", "En progreso", "Resuelto", "Bloqueado"])
             f_fecha = st.text_input("Fecha límite (ej. 'Ago 1' o '30 Oct')")
+            f_responsable = st.selectbox("Responsable", ["Sin asignar", "Aldo Pérez", "BASE AGENCY", "Roxana Antohi", "Pablo Díaz"])
             submitted = st.form_submit_button("Agregar tarea")
             if submitted:
                 if not f_tarea.strip():
                     st.error("Escribe una descripción de la tarea.")
                 else:
-                    ok, msg = add_task_to_sheet(f_casa, f_tarea, f_estado, f_fecha)
+                    ok, msg = add_task_to_sheet(f_casa, f_tarea, f_estado, f_fecha, f_responsable)
                     if ok:
                         st.success(msg)
                     else:
@@ -730,7 +817,9 @@ def get_live_sheet_context():
     lines = ["\n⸻\n\nTAREAS ACTUALES (Google Sheet — fuente viva, prioriza esto sobre supuestos):"]
     if tasks:
         for t in tasks:
-            lines.append(f"- [{t.get('Casa', '')}] {t.get('Tarea', '')} — Estado: {t.get('Estado', '')} — Vence: {t.get('Fecha_limite', '')}")
+            resp = t.get('Responsable', '')
+            resp_txt = f" — Responsable: {resp}" if resp else ""
+            lines.append(f"- [{t.get('Casa', '')}] {t.get('Tarea', '')} — Estado: {t.get('Estado', '')} — Vence: {t.get('Fecha_limite', '')}{resp_txt}")
     else:
         lines.append("(No hay tareas registradas todavía en la pestaña Tareas.)")
 
@@ -780,6 +869,21 @@ def call_claude():
 
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "Hola Pablo — soy tu asistente de producción de MXTW. ¿En qué casa o pendiente quieres que te ayude hoy?"}]
+
+with tab_aldo:
+    render_person_tab(PEOPLE_TABS[0])
+
+with tab_base:
+    render_person_tab(PEOPLE_TABS[1])
+    st.markdown('<div class="quick-prompt-label" style="margin-top:20px;">Próximos entregables</div>', unsafe_allow_html=True)
+    for label, dt in DELIVERABLES:
+        st.markdown(f'<div class="deliverable-row"><span>{label}</span><span class="deliverable-date">{dt}</span></div>', unsafe_allow_html=True)
+
+with tab_roxana:
+    render_person_tab(PEOPLE_TABS[2])
+
+with tab_pablo:
+    render_person_tab(PEOPLE_TABS[3])
 
 with tab_chat:
     QUICK_PROMPTS = [
