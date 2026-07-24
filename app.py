@@ -258,6 +258,35 @@ def check_password():
 if not check_password():
     st.stop()
 
+# ---------- QUICK CAPTURE MODE (para acceso directo desde el teléfono) ----------
+if "quick" in st.query_params:
+    st.markdown(f"""
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+      <img src="data:image/png;base64,{HEX_ICON}" style="height:32px;">
+      <span style="font-family:'Bebas Neue',sans-serif;color:#F0EDE6;font-size:18px;letter-spacing:0.06em;">CAPTURA RÁPIDA</span>
+    </div>
+    """, unsafe_allow_html=True)
+    houses_q = get_houses_data()
+    casa_options_q = [h.get("Nombre", "") for h in houses_q] + ["General / Todas las casas"]
+    with st.form("quick_capture_form", clear_on_submit=True):
+        q_casa = st.selectbox("Casa", casa_options_q)
+        q_tarea = st.text_input("Tarea", placeholder="Escribe y manda...")
+        q_estado = st.selectbox("Estado", ["Pendiente", "En progreso", "Resuelto", "Bloqueado"], index=0)
+        q_responsable = st.selectbox("Responsable", ["Sin asignar", "Aldo Pérez", "BASE AGENCY", "Roxana Antohi", "Pablo Díaz"])
+        q_fecha = st.text_input("Fecha límite (opcional)")
+        q_submit = st.form_submit_button("➕ Agregar", use_container_width=True)
+        if q_submit:
+            if not q_tarea.strip():
+                st.error("Escribe la tarea.")
+            else:
+                ok, msg = add_task_to_sheet(q_casa, q_tarea, q_estado, q_fecha, q_responsable)
+                if ok:
+                    st.success("Agregada ✓")
+                else:
+                    st.error(msg)
+    st.caption("Modo de captura rápida — sin War Room ni chat, solo el formulario.")
+    st.stop()
+
 # ---------- HEADER ----------
 st.markdown(f"""
 <div class="mxtw-header">
