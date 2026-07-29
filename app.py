@@ -233,13 +233,6 @@ html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
 
 # ---------- PASSWORD GATE ----------
 def check_password():
-    def password_entered():
-        if st.session_state.get("password_input") == st.secrets.get("APP_PASSWORD", ""):
-            st.session_state["authenticated"] = True
-            del st.session_state["password_input"]
-        else:
-            st.session_state["authenticated"] = False
-
     if st.session_state.get("authenticated"):
         return True
 
@@ -249,9 +242,17 @@ def check_password():
       <span style="font-family:'Bebas Neue',sans-serif;color:#F0EDE6;font-size:18px;letter-spacing:0.06em;">MXTW PRODUCTION</span>
     </div>
     """, unsafe_allow_html=True)
-    st.text_input("Contraseña / Password", type="password", key="password_input", on_change=password_entered)
-    if "authenticated" in st.session_state and not st.session_state["authenticated"]:
-        st.error("Contraseña incorrecta.")
+
+    with st.form("login_form"):
+        pw = st.text_input("Contraseña / Password", type="password")
+        submitted = st.form_submit_button("Entrar")
+        if submitted:
+            if pw == st.secrets.get("APP_PASSWORD", ""):
+                st.session_state["authenticated"] = True
+                st.rerun()
+            else:
+                st.error("Contraseña incorrecta.")
+
     st.caption("Acceso restringido al equipo de producción de MXTW.")
     return False
 
