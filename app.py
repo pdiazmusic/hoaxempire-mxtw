@@ -63,26 +63,26 @@ def get_gsheet_client():
     except Exception:
         return None
 
-CASAS_HEADERS = ["Nombre", "Tag", "Color", "Badge_Tipo", "Badge_Texto", "Resumen", "Detalle"]
+CASAS_HEADERS = ["Nombre", "Tag", "Color", "Badge_Tipo", "Badge_Texto", "Resumen", "Detalle", "Permiso_PC", "Seguro_RC"]
 
 # Datos actuales, usados SOLO una vez para poblar el Sheet la primera vez (migración).
 # Después de migrar, el Sheet es la única fuente de verdad — esto deja de leerse.
 _SEED_HOUSES = [
     ["Casa T'AAN", "Investors House · Condesa", "#E63946", "badge-risk", "Legal Risk",
      "Fechas corregidas: 26-30 Oct (desmontaje 30 Oct 8am). Anticipo pagado. Sin personal operativo incluido (solo renta de espacio). Firma sigue siendo de Bernardo Cordero a título personal — riesgo confirmado, no corregido.",
-     "Casa T'AAN — Investors House, Condesa (Teotihuacán 18, Col. Hipódromo Condesa). Contrato firmado el 1 de mayo de 2026, representada por Daniela Itzkowich Algranti (Directora de Eventos) por parte de la Casa. RIESGO CONFIRMADO Y VIGENTE: el contrato sigue firmado por Bernardo Cordero a título personal como \"EL CLIENTE\", no como representante de MXTW — se confirmó que esto es correcto tal como está, es decir, el riesgo legal permanece sin corregir. Fechas del evento CORREGIDAS: 26, 27, 28, 29 y 30 de octubre de 2026 (el contrato original tenía un error de captura que decía \"20\" en vez de \"30\"). Desmontaje: 30 de octubre a partir de las 8am. Aforo máximo autorizado: 180 personas. Costo: $240,000 MXN + IVA; anticipo del 50% ($120,000 MXN) YA FUE PAGADO. Límite de sonido: 60dB, controlado únicamente por el ingeniero de sonido designado por la Casa. Política de cancelación: 50% de penalización si se cancela con menos de 31 días de anticipación; sin reembolso si es con menos de 7 días. Reglas clave: prohibido montar/desmontar después de las 22:00 horas sin excepción; salidas de emergencia deben permanecer libres en todo momento; equipo de audio es de uso exclusivo de la Casa; cualquier daño es responsabilidad del cliente, pagadero en máximo 15 días hábiles. SERVICIOS INCLUIDOS: el costo de la renta SOLO incluye el espacio — NO incluye personal operativo, de barra, de mantenimiento, audio ni mobiliario. DETALLES DE ESPACIO: se autorizó el uso de dos espacios en planta alta y el uso de los baños, pero prohibido hacer branding en el pasillo que lleva a los baños. NO se puede usar el espacio de la CONCEPT STORE (a un costado, comparte un ingreso) — no se puede poner mobiliario ahí. No se cuenta con plano de la instalación eléctrica del inmueble."],
+     "Casa T'AAN — Investors House, Condesa (Teotihuacán 18, Col. Hipódromo Condesa). Contrato firmado el 1 de mayo de 2026, representada por Daniela Itzkowich Algranti (Directora de Eventos) por parte de la Casa. RIESGO CONFIRMADO Y VIGENTE: el contrato sigue firmado por Bernardo Cordero a título personal como \"EL CLIENTE\", no como representante de MXTW — se confirmó que esto es correcto tal como está, es decir, el riesgo legal permanece sin corregir. Fechas del evento CORREGIDAS: 26, 27, 28, 29 y 30 de octubre de 2026 (el contrato original tenía un error de captura que decía \"20\" en vez de \"30\"). Desmontaje: 30 de octubre a partir de las 8am. Aforo máximo autorizado: 180 personas. Costo: $240,000 MXN + IVA; anticipo del 50% ($120,000 MXN) YA FUE PAGADO. Límite de sonido: 60dB, controlado únicamente por el ingeniero de sonido designado por la Casa. Política de cancelación: 50% de penalización si se cancela con menos de 31 días de anticipación; sin reembolso si es con menos de 7 días. Reglas clave: prohibido montar/desmontar después de las 22:00 horas sin excepción; salidas de emergencia deben permanecer libres en todo momento; equipo de audio es de uso exclusivo de la Casa; cualquier daño es responsabilidad del cliente, pagadero en máximo 15 días hábiles. SERVICIOS INCLUIDOS: el costo de la renta SOLO incluye el espacio — NO incluye personal operativo, de barra, de mantenimiento, audio ni mobiliario. DETALLES DE ESPACIO: se autorizó el uso de dos espacios en planta alta y el uso de los baños, pero prohibido hacer branding en el pasillo que lleva a los baños. NO se puede usar el espacio de la CONCEPT STORE (a un costado, comparte un ingreso) — no se puede poner mobiliario ahí. No se cuenta con plano de la instalación eléctrica del inmueble.", "Pendiente", "Pendiente"],
     ["LUC 34", "Developers House · Colonia Juárez · antes 'Lucerna 34'", "#C8A96E", "badge-pending", "Verify Payment",
      "Contrato firmado (9 jul) con Michelle Zamorano Leyva, MXTW rep. correctamente por Bernardo Cordero Benabib. $342,200 IVA inc. Montaje 26 Oct, evento 27-29 Oct, desmontaje 30 Oct. Aforo 550. Verificar diferencia de pago ($98,333 contrato vs $102,348 transferido).",
-     "LUC 34 (antes \"Lucerna 34\") — Colonia Juárez. Contrato vigente firmado el 9 de julio de 2026 entre Michelle Zamorano Leyva (persona física, RFC ZLM9610211X5) y MXTW SAPI de CV, representada correctamente por Bernardo Cordero Benabib como Administrador Único (sin riesgo de firma personal). Aforo: 550 personas (Salón Principal 200, Terraza 200, Sótano 150). Fechas: montaje 26 de octubre (8am, 8h), evento 27-29 de octubre (8h/día hasta las 2am), desmontaje 30 de octubre (8am, 8h) — horarios exactos de inicio diario aún en blanco en el contrato. Costo total: $342,200 MXN IVA incluido. Depósito en garantía: $25,000 (reembolsable 2-6 días hábiles tras el evento). Límite de sonido: 65dB — excederlo es causal de rescisión + $7,500 de penalización. Prohíbe música electrónica/DJ/rave/banda fuera de horario, sin excepciones. Seguridad, valet (máx 10h), paramédicos y planta de luz son obligación del cliente. Cancelación: 50% de penalización si se cancela hasta 16 días antes, 100% si es 15-0 días antes; cambio de fecha fuera de mes acordado: 20%. RIESGOS: (a) primer pago debía ser $98,333.33 pero se transfirieron $102,348.57 el 21 de julio — diferencia de ~$4,015 sin aclarar. (b) Existe un contrato anterior (mayo) con otra razón social (LUC 34 Servicios Inmobiliarios y de Entretenimiento SAS de CV, Irving Zamorano Nuncio) y otro precio ($255,000+$40,000) — el de julio es el vigente por tener pago realizado en su contra, pero confirmar que no haya confusión."],
+     "LUC 34 (antes \"Lucerna 34\") — Colonia Juárez. Contrato vigente firmado el 9 de julio de 2026 entre Michelle Zamorano Leyva (persona física, RFC ZLM9610211X5) y MXTW SAPI de CV, representada correctamente por Bernardo Cordero Benabib como Administrador Único (sin riesgo de firma personal). Aforo: 550 personas (Salón Principal 200, Terraza 200, Sótano 150). Fechas: montaje 26 de octubre (8am, 8h), evento 27-29 de octubre (8h/día hasta las 2am), desmontaje 30 de octubre (8am, 8h) — horarios exactos de inicio diario aún en blanco en el contrato. Costo total: $342,200 MXN IVA incluido. Depósito en garantía: $25,000 (reembolsable 2-6 días hábiles tras el evento). Límite de sonido: 65dB — excederlo es causal de rescisión + $7,500 de penalización. Prohíbe música electrónica/DJ/rave/banda fuera de horario, sin excepciones. Seguridad, valet (máx 10h), paramédicos y planta de luz son obligación del cliente. Cancelación: 50% de penalización si se cancela hasta 16 días antes, 100% si es 15-0 días antes; cambio de fecha fuera de mes acordado: 20%. RIESGOS: (a) primer pago debía ser $98,333.33 pero se transfirieron $102,348.57 el 21 de julio — diferencia de ~$4,015 sin aclarar. (b) Existe un contrato anterior (mayo) con otra razón social (LUC 34 Servicios Inmobiliarios y de Entretenimiento SAS de CV, Irving Zamorano Nuncio) y otro precio ($255,000+$40,000) — el de julio es el vigente por tener pago realizado en su contra, pero confirmar que no haya confusión.", "Pendiente", "Pendiente"],
     ["Casa Barcelona 26", "AI House · Colonia Juárez · Aforo 2000", "#C8A96E", "badge-pending", "Verify Payment",
      "Contrato DocuSign confirmado (firmado 28 may). $490,000+IVA. Montaje 26 Oct 7am–27 Oct 7am, evento 27-29 Oct 10am-10pm, desmontaje 30 Oct 7am-7pm. Subarrendamiento SÍ autorizado desde 2022 (riesgo descartado). Verificar: pago de $284,200 fue a 'SEADEM SA DE CV', no a Casa Barcelona directamente.",
-     "Casa Barcelona 26 — AI House, Calle Barcelona No. 26, Colonia Juárez, CDMX. CONTRATO CONFIRMADO: versión DocuSign del 1 de julio de 2026 (firma de fondo 28 de mayo) — hay versiones anteriores (22 de junio) con datos distintos que ya no aplican. Arrendador: \"Casa Barcelona\" S.A.P.I. de C.V., representada por Giovani García Bautista. Arrendatario: MXTW S.A.P.I. de C.V., representada correctamente por Bernardo Cordero Benabib (sin riesgo de firma personal). FECHAS: Montaje 26 oct 07:00 hasta 27 oct 07:00 (24h continuas). Evento 27-29 oct, 10:00-22:00 cada día. Desmontaje 30 oct, 07:00-19:00. Aforo: 2000 personas, evento privado con boleto. COSTOS: Renta $490,000 MXN + IVA. Depósito: $30,000 (devuelto 10 días naturales después). Pago: 50% al firmar, 50% restante 24h antes del montaje. Fecha límite de pago: 25 de octubre. Incluye: 3 personas de limpieza, 2 de seguridad, 1 paramédico, planta de luz 80kW por 14h. SUBARRENDAMIENTO YA RESUELTO: el contrato original de 2022 autoriza expresamente subarrendar — riesgo descartado. REGLAS: prohibido ruido de montaje 10am-7pm (solo 7-10am o 7-11pm); planta de luz dentro del predio; valet en la calle Barcelona 26; cocina solo el día del evento (penalización $4,000 si no se entrega limpia); sonido sujeto a NOM, sin límite fijo de dB. CANCELACIÓN: cliente cancela = pierde 50% anticipo; Casa Barcelona cancela = devuelve 50%. Cambio de fecha: 50% si <30 días, 25% si <90 días, $20,000 fijos si >90 días. RIESGO A VERIFICAR: pago de $284,200 (30 jun) se transfirió a 'SEADEM SA DE CV', nombre distinto a 'Casa Barcelona S.A.P.I. de C.V.' — confirmar con el equipo."],
+     "Casa Barcelona 26 — AI House, Calle Barcelona No. 26, Colonia Juárez, CDMX. CONTRATO CONFIRMADO: versión DocuSign del 1 de julio de 2026 (firma de fondo 28 de mayo) — hay versiones anteriores (22 de junio) con datos distintos que ya no aplican. Arrendador: \"Casa Barcelona\" S.A.P.I. de C.V., representada por Giovani García Bautista. Arrendatario: MXTW S.A.P.I. de C.V., representada correctamente por Bernardo Cordero Benabib (sin riesgo de firma personal). FECHAS: Montaje 26 oct 07:00 hasta 27 oct 07:00 (24h continuas). Evento 27-29 oct, 10:00-22:00 cada día. Desmontaje 30 oct, 07:00-19:00. Aforo: 2000 personas, evento privado con boleto. COSTOS: Renta $490,000 MXN + IVA. Depósito: $30,000 (devuelto 10 días naturales después). Pago: 50% al firmar, 50% restante 24h antes del montaje. Fecha límite de pago: 25 de octubre. Incluye: 3 personas de limpieza, 2 de seguridad, 1 paramédico, planta de luz 80kW por 14h. SUBARRENDAMIENTO YA RESUELTO: el contrato original de 2022 autoriza expresamente subarrendar — riesgo descartado. REGLAS: prohibido ruido de montaje 10am-7pm (solo 7-10am o 7-11pm); planta de luz dentro del predio; valet en la calle Barcelona 26; cocina solo el día del evento (penalización $4,000 si no se entrega limpia); sonido sujeto a NOM, sin límite fijo de dB. CANCELACIÓN: cliente cancela = pierde 50% anticipo; Casa Barcelona cancela = devuelve 50%. Cambio de fecha: 50% si <30 días, 25% si <90 días, $20,000 fijos si >90 días. RIESGO A VERIFICAR: pago de $284,200 (30 jun) se transfirió a 'SEADEM SA DE CV', nombre distinto a 'Casa Barcelona S.A.P.I. de C.V.' — confirmar con el equipo.", "Pendiente", "Pendiente"],
     ["Casa Jarana", "Wellness House · Durango 279, Roma Norte", "#C8A96E", "badge-pending", "Verify Turnos",
      "Montaje 26 Oct (9am-6pm), operación 27-29 Oct, desmontaje 30 Oct. Planta de luz 80kW YA cotizada: $65,000. Nuevo total $347,942 (+ $12,000 cocina pendiente de sumar = ~$359,942). Stage máx 30 personas.",
-     "Casa Jarana — Wellness House, Calle Durango 279, Col. Roma Norte, CDMX. Arrendador: Casa Anaraj SA de CV, representada por Nicolás González Lemaitre. Contrato correctamente a nombre de MXTW SAPI de CV (sin riesgo de firma personal). Fechas: montaje 26 de octubre (9am-6pm), operación 27-29 de octubre, desmontaje 30 de octubre. Duración máxima del evento por día: 8h continuas (hora extra = 15% del importe de renta). Stage máx 30 personas. Contacto: Patricio Morán (info@casajarana.mx, +52 55 5456 5310). PRESUPUESTO: Montaje 1 turno 9am-6pm $30,000 (importe $35,000). Renta mar/miér/jue $187,000 con 15% desc = $158,950. Desmontaje $40,000 con 20% desc = $32,000. Seguridad 3 personas (14h) $9,000. Planta de luz 80kW (3 días + montaje) $65,000. Subtotal $299,950. IVA $47,992. TOTAL $347,942 — NO incluye uso de cocina ($12,000 pendiente de sumar; total real ~$359,942). Depósito: $10,000 + $2,500 por proveedor externo/día. Cancelación: 60 días antes=50% recuperación, 30 días=40%, 15 días=20%, 14 días o menos=0%. Costos aparte: tarimas, calentadores $1,500 c/u, seguridad interna $2,500 c/u. PENDIENTES: (a) sin confirmar si 1 turno de montaje (9h) basta o hacen falta 2 turnos. (b) sin confirmar si la seguridad del presupuesto alcanza. (c) sin definir cuántos proveedores externos para calcular depósito. (d) aforo general del venue sigue sin definir. Espacio pet-friendly."],
+     "Casa Jarana — Wellness House, Calle Durango 279, Col. Roma Norte, CDMX. Arrendador: Casa Anaraj SA de CV, representada por Nicolás González Lemaitre. Contrato correctamente a nombre de MXTW SAPI de CV (sin riesgo de firma personal). Fechas: montaje 26 de octubre (9am-6pm), operación 27-29 de octubre, desmontaje 30 de octubre. Duración máxima del evento por día: 8h continuas (hora extra = 15% del importe de renta). Stage máx 30 personas. Contacto: Patricio Morán (info@casajarana.mx, +52 55 5456 5310). PRESUPUESTO: Montaje 1 turno 9am-6pm $30,000 (importe $35,000). Renta mar/miér/jue $187,000 con 15% desc = $158,950. Desmontaje $40,000 con 20% desc = $32,000. Seguridad 3 personas (14h) $9,000. Planta de luz 80kW (3 días + montaje) $65,000. Subtotal $299,950. IVA $47,992. TOTAL $347,942 — NO incluye uso de cocina ($12,000 pendiente de sumar; total real ~$359,942). Depósito: $10,000 + $2,500 por proveedor externo/día. Cancelación: 60 días antes=50% recuperación, 30 días=40%, 15 días=20%, 14 días o menos=0%. Costos aparte: tarimas, calentadores $1,500 c/u, seguridad interna $2,500 c/u. PENDIENTES: (a) sin confirmar si 1 turno de montaje (9h) basta o hacen falta 2 turnos. (b) sin confirmar si la seguridad del presupuesto alcanza. (c) sin definir cuántos proveedores externos para calcular depósito. (d) aforo general del venue sigue sin definir. Espacio pet-friendly.", "Pendiente", "Pendiente"],
     ["ISDI Marsella 45", "Founders House", "#3A3A3A", "badge-review", "Sin revisar",
      "Nueva casa asignada al formato — Founders House. Contrato aún no recibido ni revisado. Confirmar con BASE AGENCY.",
-     "ISDI Marsella 45 — Founders House. Quinta casa del formato Mexico Tech Town, recién asignada. Aún sin detalle de contrato revisado — si Pablo pregunta por ella, indícale que no tienes ese contrato todavía y sugiere confirmarlo con BASE AGENCY."],
+     "ISDI Marsella 45 — Founders House. Quinta casa del formato Mexico Tech Town, recién asignada. Aún sin detalle de contrato revisado — si Pablo pregunta por ella, indícale que no tienes ese contrato todavía y sugiere confirmarlo con BASE AGENCY.", "Pendiente", "Pendiente"],
 ]
 
 def seed_casas_sheet(force=False):
@@ -118,7 +118,8 @@ def get_houses_data():
     fallback = [{"Nombre": "Casas (sin conexión al Sheet)", "Tag": "", "Color": "#3A3A3A",
                  "Badge_Tipo": "badge-review", "Badge_Texto": "Sin datos",
                  "Resumen": "No hay conexión con Google Sheets todavía — conecta Secrets para ver las casas reales.",
-                 "Detalle": "Sin datos de casas disponibles (Sheet no conectado)."}]
+                 "Detalle": "Sin datos de casas disponibles (Sheet no conectado).",
+                 "Permiso_PC": "Pendiente", "Seguro_RC": "Pendiente"}]
     if client is None:
         return fallback
     try:
@@ -130,6 +131,23 @@ def get_houses_data():
         return records
     except Exception:
         return fallback
+
+def update_house_compliance(nombre, permiso_pc, seguro_rc):
+    """Actualiza las columnas Permiso_PC y Seguro_RC de una casa existente en la pestaña Casas."""
+    client = get_gsheet_client()
+    if client is None:
+        return False, "No hay conexión con Google Sheets."
+    try:
+        sh = client.open(SHEET_NAME)
+        ws = sh.worksheet("Casas")
+        cell = ws.find(nombre)
+        if cell is None:
+            return False, f"No encontré la casa '{nombre}' en la pestaña Casas."
+        ws.update_cell(cell.row, 8, permiso_pc)
+        ws.update_cell(cell.row, 9, seguro_rc)
+        return True, f"Actualizado: {nombre} — Permiso PC: {permiso_pc}, Seguro RC: {seguro_rc}."
+    except Exception as e:
+        return False, f"Error al actualizar: {e}"
 
 def add_task_to_sheet(casa, tarea, estado, fecha_limite, responsable="Sin asignar"):
     """Agrega una fila nueva a la pestaña Tareas. Devuelve (ok, mensaje)."""
@@ -396,13 +414,29 @@ tab_board, tab_aldo, tab_base, tab_roxana, tab_pablo, tab_chat = st.tabs(
 with tab_board:
     st.markdown('<div class="quick-prompt-label">Estado de las 5 casas</div>', unsafe_allow_html=True)
     HOUSES_LIVE = get_houses_data()
+
+    def _compliance_style(value):
+        v = (value or "").strip().lower()
+        if v in ("sí", "si", "vigente", "ok", "completo"):
+            return "#2ecc71"
+        if v in ("pendiente", "", "no"):
+            return "#C8A96E"
+        return "rgba(240,237,230,0.4)"
+
     for h in HOUSES_LIVE:
+        permiso = h.get("Permiso_PC", "Pendiente") or "Pendiente"
+        seguro = h.get("Seguro_RC", "Pendiente") or "Pendiente"
         st.markdown(f"""
         <div class="house-card" style="border-left-color:{h.get('Color','#3A3A3A')};">
           <div class="house-tag">{h.get('Tag','')}</div>
           <div class="house-name">{h.get('Nombre','')}</div>
           <div class="house-status">{h.get('Resumen','')}</div>
           <span class="status-badge {h.get('Badge_Tipo','badge-review')}">{h.get('Badge_Texto','')}</span>
+          <div style="margin-top:8px; font-size:11px; letter-spacing:0.05em;">
+            <span style="color:{_compliance_style(permiso)};">⬤ Permiso PC: {permiso}</span>
+            &nbsp;&nbsp;
+            <span style="color:{_compliance_style(seguro)};">⬤ Seguro RC: {seguro}</span>
+          </div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -447,6 +481,21 @@ with tab_board:
                 st.success(msg)
             else:
                 st.warning(msg)
+
+    with st.expander("🛡️ Actualizar Permiso PC / Seguro RC de una casa"):
+        houses_for_compliance = get_houses_data()
+        compliance_names = [h.get("Nombre", "") for h in houses_for_compliance]
+        with st.form("compliance_form"):
+            c_casa = st.selectbox("Casa", compliance_names)
+            c_permiso = st.selectbox("Permiso de Protección Civil", ["Pendiente", "Solicitado", "Sí", "Vigente", "No"])
+            c_seguro = st.selectbox("Seguro de Responsabilidad Civil", ["Pendiente", "Solicitado", "Sí", "Vigente", "No"])
+            c_submit = st.form_submit_button("Actualizar")
+            if c_submit:
+                ok, msg = update_house_compliance(c_casa, c_permiso, c_seguro)
+                if ok:
+                    st.success(msg)
+                else:
+                    st.error(msg)
 
 # ---------- SYSTEM PROMPT ----------
 ROLE_PROMPT = """PROMPT – Chief of Staff Virtual | Head of Production | Mexico Tech Week 2026
@@ -946,7 +995,8 @@ def build_houses_prompt_section():
     houses = get_houses_data()
     lines = ["⸻", "", "LAS CASAS (detalle completo, leído en vivo desde la pestaña 'Casas' del Sheet):"]
     for i, h in enumerate(houses, 1):
-        lines.append(f"{i}. {h.get('Nombre','')} — {h.get('Detalle', h.get('Resumen',''))}")
+        cumplimiento = f" [Permiso Protección Civil: {h.get('Permiso_PC', 'Pendiente')} · Seguro RC: {h.get('Seguro_RC', 'Pendiente')}]"
+        lines.append(f"{i}. {h.get('Nombre','')} — {h.get('Detalle', h.get('Resumen',''))}{cumplimiento}")
     return "\n".join(lines)
 
 def build_system_prompt():
