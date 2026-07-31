@@ -18,7 +18,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install notion-client gspread google-auth
+        run: pip install requests gspread google-auth
 
       - name: Run sync
         env:
