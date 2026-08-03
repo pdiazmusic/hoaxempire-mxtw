@@ -1041,14 +1041,15 @@ def call_claude():
         history = history[1:]
     response = client.messages.create(
         model="claude-sonnet-5",
-        max_tokens=2000,
+        max_tokens=4096,
         system=build_system_prompt(),
         messages=history,
     )
-    for block in response.content:
-        if getattr(block, "type", None) == "text":
-            return block.text
-    return "(El modelo no devolvió texto en la respuesta. Intenta de nuevo.)"
+    text_parts = [block.text for block in response.content if getattr(block, "type", None) == "text"]
+    answer = "\n".join(text_parts) if text_parts else "(El modelo no devolvió texto en la respuesta. Intenta de nuevo.)"
+    if response.stop_reason == "max_tokens":
+        answer += "\n\n⚠️ *Esta respuesta se cortó por límite de longitud — pide 'continúa' si necesitas el resto.*"
+    return answer
 
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "Hola Pablo — soy tu asistente de producción de MXTW. ¿En qué casa o pendiente quieres que te ayude hoy?"}]
