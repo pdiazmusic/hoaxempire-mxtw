@@ -69,11 +69,13 @@ CASAS_HEADERS = ["Nombre", "Tag", "Color", "Badge_Tipo", "Badge_Texto", "Resumen
 # Después de migrar, el Sheet es la única fuente de verdad — esto deja de leerse.
 _SEED_HOUSES = [
     ["Casa T'AAN", "Investors House · Condesa", "#E63946", "badge-risk", "Legal Risk",
-     "Fechas corregidas: 26-30 Oct (desmontaje 30 Oct 8am). Anticipo pagado. Sin personal operativo incluido (solo renta de espacio). Firma sigue siendo de Bernardo Cordero a título personal — riesgo confirmado, no corregido.",
-     "Casa T'AAN — Investors House, Condesa (Teotihuacán 18, Col. Hipódromo Condesa). Contrato firmado el 1 de mayo de 2026, representada por Daniela Itzkowich Algranti (Directora de Eventos) por parte de la Casa. RIESGO CONFIRMADO Y VIGENTE: el contrato sigue firmado por Bernardo Cordero a título personal como \"EL CLIENTE\", no como representante de MXTW — se confirmó que esto es correcto tal como está, es decir, el riesgo legal permanece sin corregir. Fechas del evento CORREGIDAS: 26, 27, 28, 29 y 30 de octubre de 2026 (el contrato original tenía un error de captura que decía \"20\" en vez de \"30\"). Desmontaje: 30 de octubre a partir de las 8am. Aforo máximo autorizado: 180 personas. Costo: $240,000 MXN + IVA; anticipo del 50% ($120,000 MXN) YA FUE PAGADO. Límite de sonido: 60dB, controlado únicamente por el ingeniero de sonido designado por la Casa. Política de cancelación: 50% de penalización si se cancela con menos de 31 días de anticipación; sin reembolso si es con menos de 7 días. Reglas clave: prohibido montar/desmontar después de las 22:00 horas sin excepción; salidas de emergencia deben permanecer libres en todo momento; equipo de audio es de uso exclusivo de la Casa; cualquier daño es responsabilidad del cliente, pagadero en máximo 15 días hábiles. SERVICIOS INCLUIDOS: el costo de la renta SOLO incluye el espacio — NO incluye personal operativo, de barra, de mantenimiento, audio ni mobiliario. DETALLES DE ESPACIO: se autorizó el uso de dos espacios en planta alta y el uso de los baños, pero prohibido hacer branding en el pasillo que lleva a los baños. NO se puede usar el espacio de la CONCEPT STORE (a un costado, comparte un ingreso) — no se puede poner mobiliario ahí. No se cuenta con plano de la instalación eléctrica del inmueble.", "Pendiente", "Pendiente"],
+     "Fechas corregidas: 26-30 Oct (desmontaje 30 Oct 8am). Anticipo pagado. Sin personal operativo incluido (solo renta de espacio). Firma sigue siendo de Bernardo Cordero a título personal — riesgo confirmado, no corregido. Permiso PC y Seguro RC del inmueble YA VERIFICADOS.",
+     "Casa T'AAN — Investors House, Condesa (Teotihuacán 18, Col. Hipódromo Condesa). Contrato firmado el 1 de mayo de 2026, representada por Daniela Itzkowich Algranti (Directora de Eventos) por parte de la Casa. RIESGO CONFIRMADO Y VIGENTE: el contrato sigue firmado por Bernardo Cordero a título personal como \"EL CLIENTE\", no como representante de MXTW — se confirmó que esto es correcto tal como está, es decir, el riesgo legal permanece sin corregir. Fechas del evento CORREGIDAS: 26, 27, 28, 29 y 30 de octubre de 2026 (el contrato original tenía un error de captura que decía \"20\" en vez de \"30\"). Desmontaje: 30 de octubre a partir de las 8am. Aforo máximo autorizado: 180 personas. Costo: $240,000 MXN + IVA; anticipo del 50% ($120,000 MXN) YA FUE PAGADO. Límite de sonido: 60dB, controlado únicamente por el ingeniero de sonido designado por la Casa. Política de cancelación: 50% de penalización si se cancela con menos de 31 días de anticipación; sin reembolso si es con menos de 7 días. Reglas clave: prohibido montar/desmontar después de las 22:00 horas sin excepción; salidas de emergencia deben permanecer libres en todo momento; equipo de audio es de uso exclusivo de la Casa; cualquier daño es responsabilidad del cliente, pagadero en máximo 15 días hábiles. SERVICIOS INCLUIDOS: el costo de la renta SOLO incluye el espacio — NO incluye personal operativo, de barra, de mantenimiento, audio ni mobiliario. DETALLES DE ESPACIO: se autorizó el uso de dos espacios en planta alta y el uso de los baños, pero prohibido hacer branding en el pasillo que lleva a los baños. NO se puede usar el espacio de la CONCEPT STORE (a un costado, comparte un ingreso) — no se puede poner mobiliario ahí. No se cuenta con plano de la instalación eléctrica del inmueble. DOCUMENTOS DE CUMPLIMIENTO VERIFICADOS (Teotihuacán 18): el inmueble está a nombre de NEST CENTER S.A.P.I. DE C.V. (rep. legal Alejandro Ickowicz Portnoy) en sus permisos y póliza — distinto al firmante personal del contrato de renta. Visto Bueno de Seguridad y Operación vigente 11 feb 2026 – 11 feb 2029 (uso: galería de arte y exposiciones temporales, 409m²). Póliza de RC General con Seguros Afirme, vigente 31 ene 2026 – 31 ene 2027, límite $2,000,000 MXN (giro declarado: restaurante/galería/muebles y arte; deducible 10% mín. 100 UMA; excluye sobrecupo, cancelación de eventos, servicios cedidos, falta de luz/agua). Constancia de Protección Civil folio SGIRPC-17433-2026, vigente hasta 11 marzo 2031. Programa Interno de PC completo, con salidas de emergencia identificadas y planos anexos — pero el aforo autorizado en ese programa es de 60 personas, menor al aforo de evento de 180 — verificar esta discrepancia antes del evento.",
+     "Sí", "Sí"],
     ["LUC 34", "Developers House · Colonia Juárez · antes 'Lucerna 34'", "#C8A96E", "badge-pending", "Verify Payment",
-     "Contrato firmado (9 jul) con Michelle Zamorano Leyva, MXTW rep. correctamente por Bernardo Cordero Benabib. $342,200 IVA inc. Montaje 26 Oct, evento 27-29 Oct, desmontaje 30 Oct. Aforo 550. Verificar diferencia de pago ($98,333 contrato vs $102,348 transferido).",
-     "LUC 34 (antes \"Lucerna 34\") — Colonia Juárez. Contrato vigente firmado el 9 de julio de 2026 entre Michelle Zamorano Leyva (persona física, RFC ZLM9610211X5) y MXTW SAPI de CV, representada correctamente por Bernardo Cordero Benabib como Administrador Único (sin riesgo de firma personal). Aforo: 550 personas (Salón Principal 200, Terraza 200, Sótano 150). Fechas: montaje 26 de octubre (8am, 8h), evento 27-29 de octubre (8h/día hasta las 2am), desmontaje 30 de octubre (8am, 8h) — horarios exactos de inicio diario aún en blanco en el contrato. Costo total: $342,200 MXN IVA incluido. Depósito en garantía: $25,000 (reembolsable 2-6 días hábiles tras el evento). Límite de sonido: 65dB — excederlo es causal de rescisión + $7,500 de penalización. Prohíbe música electrónica/DJ/rave/banda fuera de horario, sin excepciones. Seguridad, valet (máx 10h), paramédicos y planta de luz son obligación del cliente. Cancelación: 50% de penalización si se cancela hasta 16 días antes, 100% si es 15-0 días antes; cambio de fecha fuera de mes acordado: 20%. RIESGOS: (a) primer pago debía ser $98,333.33 pero se transfirieron $102,348.57 el 21 de julio — diferencia de ~$4,015 sin aclarar. (b) Existe un contrato anterior (mayo) con otra razón social (LUC 34 Servicios Inmobiliarios y de Entretenimiento SAS de CV, Irving Zamorano Nuncio) y otro precio ($255,000+$40,000) — el de julio es el vigente por tener pago realizado en su contra, pero confirmar que no haya confusión.", "Pendiente", "Pendiente"],
+     "Contrato firmado (9 jul) con Michelle Zamorano Leyva, MXTW rep. correctamente por Bernardo Cordero Benabib. $342,200 IVA inc. Montaje 26 Oct, evento 27-29 Oct, desmontaje 30 Oct. Aforo 550. Verificar diferencia de pago ($98,333 contrato vs $102,348 transferido). Permiso PC y Seguro RC YA VERIFICADOS.",
+     "LUC 34 (antes \"Lucerna 34\") — Colonia Juárez. Contrato vigente firmado el 9 de julio de 2026 entre Michelle Zamorano Leyva (persona física, RFC ZLM9610211X5) y MXTW SAPI de CV, representada correctamente por Bernardo Cordero Benabib como Administrador Único (sin riesgo de firma personal). Aforo: 550 personas (Salón Principal 200, Terraza 200, Sótano 150). Fechas: montaje 26 de octubre (8am, 8h), evento 27-29 de octubre (8h/día hasta las 2am), desmontaje 30 de octubre (8am, 8h) — horarios exactos de inicio diario aún en blanco en el contrato. Costo total: $342,200 MXN IVA incluido. Depósito en garantía: $25,000 (reembolsable 2-6 días hábiles tras el evento). Límite de sonido: 65dB — excederlo es causal de rescisión + $7,500 de penalización. Prohíbe música electrónica/DJ/rave/banda fuera de horario, sin excepciones. Seguridad, valet (máx 10h), paramédicos y planta de luz son obligación del cliente. Cancelación: 50% de penalización si se cancela hasta 16 días antes, 100% si es 15-0 días antes; cambio de fecha fuera de mes acordado: 20%. RIESGOS: (a) primer pago debía ser $98,333.33 pero se transfirieron $102,348.57 el 21 de julio — diferencia de ~$4,015 sin aclarar. (b) Existe un contrato anterior (mayo) con otra razón social (LUC 34 Servicios Inmobiliarios y de Entretenimiento SAS de CV, Irving Zamorano Nuncio) y otro precio ($255,000+$40,000) — el de julio es el vigente por tener pago realizado en su contra, pero confirmar que no haya confusión. DOCUMENTOS DE CUMPLIMIENTO VERIFICADOS: carnet DRO de José Luis Gómez López, con número DRO-4414 en el carnet pero DRO-1414 en la página de detalle del Visto Bueno — discrepancia a verificar. Visto Bueno de Seguridad y Operación folio VUC_12032026_0105_VBSO, vigente 12 marzo 2026 – 12 marzo 2029, uso de suelo permitido \"restaurante con venta de bebidas alcohólicas\", superficie 801.03 m². Póliza GNP \"Seguro de Negocio Protegido\" No. 723171013, contratante y asegurada Michelle Zamorano Leyva, vigente 27 mar 2026 – 27 mar 2027, RC límite único y combinado $1,000,000 MXN (giro: restaurantes y fondas; domicilio fiscal del contratante figura como \"Lucerna 38\" mientras el riesgo asegurado es \"Lucerna 34\" — verificar esta discrepancia). Constancia de Protección Civil folio SGIRPC-17698-2026, vigente hasta 7 abril 2031. A diferencia de Casa T'AAN, aquí la misma persona (Michelle Zamorano Leyva) es consistente como contratante, asegurada y titular del registro de Protección Civil.",
+     "Sí", "Sí"],
     ["Casa Barcelona 26", "AI House · Colonia Juárez · Aforo 2000", "#C8A96E", "badge-pending", "Verify Payment",
      "Contrato DocuSign confirmado (firmado 28 may). $490,000+IVA. Montaje 26 Oct 7am–27 Oct 7am, evento 27-29 Oct 10am-10pm, desmontaje 30 Oct 7am-7pm. Subarrendamiento SÍ autorizado desde 2022 (riesgo descartado). Verificar: pago de $284,200 fue a 'SEADEM SA DE CV', no a Casa Barcelona directamente.",
      "Casa Barcelona 26 — AI House, Calle Barcelona No. 26, Colonia Juárez, CDMX. CONTRATO CONFIRMADO: versión DocuSign del 1 de julio de 2026 (firma de fondo 28 de mayo) — hay versiones anteriores (22 de junio) con datos distintos que ya no aplican. Arrendador: \"Casa Barcelona\" S.A.P.I. de C.V., representada por Giovani García Bautista. Arrendatario: MXTW S.A.P.I. de C.V., representada correctamente por Bernardo Cordero Benabib (sin riesgo de firma personal). FECHAS: Montaje 26 oct 07:00 hasta 27 oct 07:00 (24h continuas). Evento 27-29 oct, 10:00-22:00 cada día. Desmontaje 30 oct, 07:00-19:00. Aforo: 2000 personas, evento privado con boleto. COSTOS: Renta $490,000 MXN + IVA. Depósito: $30,000 (devuelto 10 días naturales después). Pago: 50% al firmar, 50% restante 24h antes del montaje. Fecha límite de pago: 25 de octubre. Incluye: 3 personas de limpieza, 2 de seguridad, 1 paramédico, planta de luz 80kW por 14h. SUBARRENDAMIENTO YA RESUELTO: el contrato original de 2022 autoriza expresamente subarrendar — riesgo descartado. REGLAS: prohibido ruido de montaje 10am-7pm (solo 7-10am o 7-11pm); planta de luz dentro del predio; valet en la calle Barcelona 26; cocina solo el día del evento (penalización $4,000 si no se entrega limpia); sonido sujeto a NOM, sin límite fijo de dB. CANCELACIÓN: cliente cancela = pierde 50% anticipo; Casa Barcelona cancela = devuelve 50%. Cambio de fecha: 50% si <30 días, 25% si <90 días, $20,000 fijos si >90 días. RIESGO A VERIFICAR: pago de $284,200 (30 jun) se transfirió a 'SEADEM SA DE CV', nombre distinto a 'Casa Barcelona S.A.P.I. de C.V.' — confirmar con el equipo.", "Pendiente", "Pendiente"],
@@ -110,6 +112,7 @@ def seed_casas_sheet(force=False):
     except Exception as e:
         return False, f"Error escribiendo en la pestaña Casas: {e}"
 
+@st.cache_data(ttl=60, show_spinner=False)
 def get_houses_data():
     """Fuente única de verdad de las casas: lee la pestaña Casas del Sheet.
     Si el Sheet no está disponible todavía, regresa un fallback mínimo para que
@@ -161,6 +164,7 @@ def add_task_to_sheet(casa, tarea, estado, fecha_limite, responsable="Sin asigna
     except Exception as e:
         return False, f"No se pudo escribir la tarea: {e}"
 
+@st.cache_data(ttl=30, show_spinner=False)
 def get_all_tasks():
     """Devuelve (lista_de_tareas, error_msg). Cada tarea es un dict con las columnas del Sheet."""
     client = get_gsheet_client()
@@ -948,18 +952,26 @@ ENTREGABLES DE BASE AGENCY:
 LO QUE SE DEBE ENTREGAR POR CASA: documento con mapeo específico, requerimientos técnicos del contrato, listado actualizado de sponsors, qué incluye la renta, y agenda de actividades confirmadas con aforo.
 """
 
+@st.cache_data(ttl=20, show_spinner=False)
+def get_recent_log_rows():
+    client = get_gsheet_client()
+    if client is None:
+        return []
+    try:
+        sh = client.open(SHEET_NAME)
+        return sh.worksheet("Bitacora").get_all_values()[1:]
+    except Exception:
+        return []
+
 def get_live_sheet_context():
     # Lee las tareas actuales y las últimas conversaciones guardadas en el Google Sheet,
     # y las suma al contexto del asistente. Si el Sheet no está conectado todavía, no rompe nada.
-    client = get_gsheet_client()
-    if client is None:
-        return ""
-    try:
-        sh = client.open(SHEET_NAME)
-        tasks = safe_get_records(sh.worksheet("Tareas"))
-        log_rows = sh.worksheet("Bitacora").get_all_values()[1:]
-    except Exception as e:
-        return f"\n(No se pudo leer el Google Sheet en este momento: {e})"
+    # Ambas lecturas usan caché de corta duración para no golpear la cuota de la API
+    # de Google en cada mensaje del chat.
+    tasks, err = get_all_tasks()
+    if err:
+        return f"\n(No se pudo leer el Google Sheet en este momento: {err})"
+    log_rows = get_recent_log_rows()
 
     lines = ["\n⸻\n\nTAREAS ACTUALES (Google Sheet — fuente viva, prioriza esto sobre supuestos):"]
     if tasks:
@@ -980,14 +992,30 @@ def get_live_sheet_context():
     return "\n".join(lines)
 
 def log_to_sheet(role, message):
-    # Guarda cada mensaje en la pestaña Bitácora para que el asistente "recuerde" entre sesiones.
-    # Si falla (Sheet no conectado, sin permisos, etc.) no interrumpe la conversación.
+    # Guarda un solo mensaje en la pestaña Bitácora. Se mantiene por compatibilidad,
+    # pero para el flujo normal del chat usa log_exchange_to_sheet (1 llamada en vez de 2).
     client = get_gsheet_client()
     if client is None:
         return
     try:
         sh = client.open(SHEET_NAME)
         sh.worksheet("Bitacora").append_row([datetime.now().strftime("%Y-%m-%d %H:%M"), role, message])
+    except Exception:
+        pass
+
+def log_exchange_to_sheet(user_message, assistant_message):
+    # Guarda el par pregunta/respuesta en UNA sola llamada a la API (append_rows),
+    # en vez de dos llamadas separadas — reduce a la mitad el consumo de cuota por mensaje.
+    client = get_gsheet_client()
+    if client is None:
+        return
+    try:
+        sh = client.open(SHEET_NAME)
+        now = datetime.now().strftime("%Y-%m-%d %H:%M")
+        sh.worksheet("Bitacora").append_rows([
+            [now, "user", user_message],
+            [now, "assistant", assistant_message],
+        ])
     except Exception:
         pass
 
@@ -1051,11 +1079,10 @@ with tab_chat:
     for i, qp in enumerate(QUICK_PROMPTS):
         if qcols[i].button(qp, key=f"quick_{i}", use_container_width=True):
             st.session_state.messages.append({"role": "user", "content": qp})
-            log_to_sheet("user", qp)
             with st.spinner("Un momento..."):
                 answer = call_claude()
             st.session_state.messages.append({"role": "assistant", "content": answer})
-            log_to_sheet("assistant", answer)
+            log_exchange_to_sheet(qp, answer)
             st.rerun()
 
     for m in st.session_state.messages:
@@ -1065,7 +1092,6 @@ with tab_chat:
     user_input = st.chat_input("Pregunta sobre una casa, riesgo, fecha o pendiente...")
     if user_input:
         st.session_state.messages.append({"role": "user", "content": user_input})
-        log_to_sheet("user", user_input)
         with st.chat_message("user"):
             st.write(user_input)
         with st.chat_message("assistant"):
@@ -1073,7 +1099,7 @@ with tab_chat:
                 answer = call_claude()
                 st.write(answer)
         st.session_state.messages.append({"role": "assistant", "content": answer})
-        log_to_sheet("assistant", answer)
+        log_exchange_to_sheet(user_input, answer)
 
 
     if len(st.session_state.messages) > 1:
